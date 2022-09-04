@@ -8,7 +8,7 @@ from fastNLP.modules import encoder, decoder
 
 
 def TZ(*args):
-    return torch.zeros(*args).cpu()
+    return torch.zeros(*args).cuda()
 
 
 class HyperLinear(nn.Module):
