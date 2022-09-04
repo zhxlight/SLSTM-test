@@ -134,8 +134,8 @@ class BertSLSTMTextClassificationModel(nn.Module):
             self.mlp = MLP([(1024 if bert_large else 768) * 2, self.n_labels], func, dropout=self.dropout_p)
         self.max_len = max_len
         self.use_cls = use_cls
-        # self.lstm = BSLSTM((1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), (1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), num_layer=1, dropout=dropout)
-        self.lstm = BSLSTM(768, 768, num_layer=1, dropout=dropout)
+        self.lstm = BSLSTM((1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), (1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), num_layer=1, dropout=dropout)
+        # self.lstm = BSLSTM(768, 768, num_layer=1, dropout=dropout)
         if not fine_tune_bert:
             self._clear_bert_encoder_grad()
 
