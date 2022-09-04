@@ -8,7 +8,7 @@ from fastNLP.modules import encoder, decoder
 
 
 def TZ(*args):
-    return torch.zeros(*args).cuda()
+    return torch.zeros(*args).cpu()
 
 
 class HyperLinear(nn.Module):
@@ -67,7 +67,6 @@ class SLSTM(nn.Module):
         # print("====================Start of forward======================")
         B, L = data.size()
         H = self.nhid
-        print(mask.size())
         def update_nodes(embs, nhs, ncs, gh, gc):
             ihs = torch.cat(
                 [torch.cat([TZ(B, 1, H), nhs[:, :-1, :]], 1), nhs, torch.cat([nhs[:, 1:, :], TZ(B, 1, H)], 1), embs,
@@ -165,7 +164,6 @@ class BSLSTM(nn.Module):
     def forward(self, data, mask):
         # print("====================Start of forward======================")
         B, L, H = data.size()
-        print(mask.size())
         def update_nodes(embs, nhs, ncs, gh, gc):
             ihs = torch.cat(
                 [torch.cat([TZ(B, 1, H), nhs[:, :-1, :]], 1), nhs, torch.cat([nhs[:, 1:, :], TZ(B, 1, H)], 1), embs,

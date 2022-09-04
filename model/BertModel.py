@@ -88,12 +88,9 @@ class TextClassificationModel(nn.Module):
         else:
             hidden = x[self.layer - 1]
         # hidden: [batch, seq_len, H * 12] if all layer else [batch, seq_len, H]
-        print('hidden:', hidden.size())
         if self.use_lstm:
             hidden = self.lstm(hidden)
         # hidden: [batch, seq_len, H * 24] if all layer else [batch, seq_len, H * 2]
-        print(x[0].shape)
-        print(_.shape)
         if self.use_cls:
             encode = hidden[:, 0, :]
         else:
@@ -137,7 +134,8 @@ class BertSLSTMTextClassificationModel(nn.Module):
             self.mlp = MLP([(1024 if bert_large else 768) * 2, self.n_labels], func, dropout=self.dropout_p)
         self.max_len = max_len
         self.use_cls = use_cls
-        self.lstm = BSLSTM((1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), (1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), num_layer=1, dropout=dropout)
+        # self.lstm = BSLSTM((1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), (1024 if bert_large else 768) * (1 if self.layer != 0 else (24 if bert_large else 12)), num_layer=1, dropout=dropout)
+        self.lstm = BSLSTM(768, 768, num_layer=1, dropout=dropout)
         if not fine_tune_bert:
             self._clear_bert_encoder_grad()
 
@@ -163,29 +161,20 @@ class BertSLSTMTextClassificationModel(nn.Module):
             tokens = tokens.to(self.parameters().__next__().device)
             mask = mask.to(self.parameters().__next__().device)
             attention_mask = attention_mask.to(self.parameters().__next__().device)
-        x, _ = self.bert_encoder(tokens, attention_mask=attention_mask, output_all_encoded_layers=True)
+        x, _ = self.bert_encoder(tokens, attention_mask=attention_mask, output_all_encoded_layers=False)
         # x: list of [batch, seq_len, H]
         # x = torch.cat(x, dim=-1)
         # x = torch.sum(x.view(x.size(0), x.size(1), -1, 12), dim=-1)
-        if self.layer == 0:
-            hidden = torch.cat(x, dim=-1)
-        else:
-            hidden = x[self.layer - 1]
+        # if self.layer == 0:
+        #     hidden = torch.cat(x, dim=-1)
+        # else:
+        #     hidden = x[self.layer - 1]
         # hidden: [batch
         # , seq_len, H * 12] if all layer else [batch, seq_len, H]
-        print('hidden111:', hidden.size())
         if self.use_lstm:
-            hidden = self.lstm(hidden, masks)
-        # hidden: [batch, seq_len, H * 24] if all layer else [batch, seq_len, H * 2]
-        print(x[0].shape)
-        print(_.shape)
-        if self.use_cls:
-            encode = hidden[:, 0, :]
-        else:
-            encode = torch.sum(hidden * mask, dim=1) / torch.sum(mask, dim=1)
-        # encode: [batch, 1, H * 12] <- get the [CLS] token for next layer.
-        prediction = self.mlp(self.dropout(encode))
-        return {'predict': prediction.to(tokens_device)}
+            res = self.lstm(x, masks)
+
+        return res
 
     def save_bert_model(self, path):
         # torch.save(self.bert_encoder.state_dict(), path)
