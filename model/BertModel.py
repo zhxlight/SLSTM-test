@@ -165,14 +165,14 @@ class BertSLSTMTextClassificationModel(nn.Module):
         # x: list of [batch, seq_len, H]
         # x = torch.cat(x, dim=-1)
         # x = torch.sum(x.view(x.size(0), x.size(1), -1, 12), dim=-1)
-        if self.layer == 0:
-            hidden = torch.cat(x, dim=-1)
-        else:
-            hidden = x[self.layer - 1]
+        # if self.layer == 0:
+        #     hidden = torch.cat(x, dim=-1)
+        # else:
+        #     hidden = x[self.layer - 1]
         # hidden: [batch
         # , seq_len, H * 12] if all layer else [batch, seq_len, H]
         if self.use_lstm:
-            res = self.lstm(hidden, masks)
+            res = self.lstm(x, masks)
 
         return res
 
