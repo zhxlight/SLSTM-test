@@ -504,7 +504,7 @@ class TransfoXLCorpus(object):
         if self.dataset in ['ptb', 'wt2', 'enwik8', 'text8']:
             self.vocab.count_file(os.path.join(path, 'train.txt'))
             self.vocab.count_file(os.path.join(path, 'valid.txt'))
-            self.vocab.count_file(os.path.join(path, 'test.txt'))
+            self.vocab.count_file(os.path.join(path, 'medical_tst'))
         elif self.dataset == 'wt103':
             self.vocab.count_file(os.path.join(path, 'train.txt'))
         elif self.dataset == 'lm1b':
@@ -522,20 +522,20 @@ class TransfoXLCorpus(object):
             self.valid = self.vocab.encode_file(
                 os.path.join(path, 'valid.txt'), ordered=True)
             self.test = self.vocab.encode_file(
-                os.path.join(path, 'test.txt'), ordered=True)
+                os.path.join(path, 'medical_tst'), ordered=True)
         elif self.dataset in ['enwik8', 'text8']:
             self.train = self.vocab.encode_file(
                 os.path.join(path, 'train.txt'), ordered=True, add_eos=False)
             self.valid = self.vocab.encode_file(
                 os.path.join(path, 'valid.txt'), ordered=True, add_eos=False)
             self.test = self.vocab.encode_file(
-                os.path.join(path, 'test.txt'), ordered=True, add_eos=False)
+                os.path.join(path, 'medical_tst'), ordered=True, add_eos=False)
         elif self.dataset == 'lm1b':
             self.train = train_paths
             self.valid = self.vocab.encode_file(
                 os.path.join(path, 'valid.txt'), ordered=False, add_double_eos=True)
             self.test = self.vocab.encode_file(
-                os.path.join(path, 'test.txt'), ordered=False, add_double_eos=True)
+                os.path.join(path, 'medical_tst'), ordered=False, add_double_eos=True)
 
     def get_iterator(self, split, *args, **kwargs):
         if split == 'train':
