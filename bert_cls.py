@@ -34,7 +34,7 @@ with open(f'./cache/{arg.dataset}_dev_dataset.pkl', 'wb') as f:
 with open(f'./cache/{arg.dataset}_test_dataset.pkl', 'wb') as f:
     _pickle.dump(test_dataset, f)
 
-model = BertSLSTMTextClassificationModel()
+model = TextClassificationModel()
 
 trainer = Trainer(
     train_data=train_dataset,
