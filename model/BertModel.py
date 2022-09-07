@@ -161,7 +161,7 @@ class BertSLSTMTextClassificationModel(nn.Module):
             tokens = tokens.to(self.parameters().__next__().device)
             mask = mask.to(self.parameters().__next__().device)
             attention_mask = attention_mask.to(self.parameters().__next__().device)
-        x, _ = self.bert_encoder(tokens, attention_mask=attention_mask, output_all_encoded_layers=True)
+        x, _ = self.bert_encoder(tokens, attention_mask=attention_mask, output_all_encoded_layers=False)
         # x: list of [batch, seq_len, H]
         # x = torch.cat(x, dim=-1)
         # x = torch.sum(x.view(x.size(0), x.size(1), -1, 12), dim=-1)
