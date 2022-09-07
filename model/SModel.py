@@ -73,13 +73,13 @@ class SLSTM(nn.Module):
                  gh[:, None, :].expand(B, L, H)], 2)
             if self.hyper:
                 xx = self.n_fc(ihs)
-                og = F.sigmoid(xx[:, :, :self.nhid])
+                og = torch.sigmoid(xx[:, :, :self.nhid])
                 uh = torch.tanh(xx[:, :, self.nhid:2 * self.nhid])
                 fs = self.n_h_fc(ihs)
-                gs = F.softmax(fs.view(embs.size(0), embs.size(1), 5, self.nhid), 2)
+                gs = torch.softmax(fs.view(embs.size(0), embs.size(1), 5, self.nhid), 2)
             else:
                 fs = self.n_fc(ihs)
-                og = F.sigmoid(fs[:, :, :self.nhid])
+                og = torch.sigmoid(fs[:, :, :self.nhid])
                 uh = torch.tanh(fs[:, :, self.nhid:2 * self.nhid])
                 gs = F.softmax(fs[:, :, self.nhid * 2:].view(embs.size(0), embs.size(1), 5, self.nhid), 2)
 
@@ -101,7 +101,7 @@ class SLSTM(nn.Module):
             # fs = self.g_att_fc(torch.cat([gh[:, None, :].expand(B, L + 1, H), ihs], 2))
             fs = fs + (1. - torch.cat([mask[:, :, None].expand(B, L, H), TZ(B, 1, H) + 1], 1)) * 200.0
             n_gc = torch.sum(F.softmax(fs, 1) * ics, 1)
-            n_gh = F.sigmoid(self.g_out_fc(torch.cat([gh, h_bar], 1))) * torch.tanh(n_gc)
+            n_gh = torch.sigmoid(self.g_out_fc(torch.cat([gh, h_bar], 1))) * torch.tanh(n_gc)
             return n_gh, n_gc
 
         embs = self.drop1(self.emb(data))
@@ -150,7 +150,7 @@ class BSLSTM(nn.Module):
 
         # self.emb.weight = nn.Parameter(Tar_emb)
         self.input = nn.Linear(nemb, nhid)
-        self.fc = nn.Linear(2 * nhid, 2)
+        self.fc = nn.Linear(2 * nhid, 14)
         self.up_fc = nn.Linear(nhid, 2 * nhid)
 
         self.drop1 = nn.Dropout(dropout)
@@ -170,13 +170,13 @@ class BSLSTM(nn.Module):
                  gh[:, None, :].expand(B, L, H)], 2)
             if self.hyper:
                 xx = self.n_fc(ihs)
-                og = F.sigmoid(xx[:, :, :self.nhid])
+                og = torch.sigmoid(xx[:, :, :self.nhid])
                 uh = torch.tanh(xx[:, :, self.nhid:2 * self.nhid])
                 fs = self.n_h_fc(ihs)
                 gs = F.softmax(fs.view(embs.size(0), embs.size(1), 5, self.nhid), 2)
             else:
                 fs = self.n_fc(ihs)
-                og = F.sigmoid(fs[:, :, :self.nhid])
+                og = torch.sigmoid(fs[:, :, :self.nhid])
                 uh = torch.tanh(fs[:, :, self.nhid:2 * self.nhid])
                 gs = F.softmax(fs[:, :, self.nhid * 2:].view(embs.size(0), embs.size(1), 5, self.nhid), 2)
 
@@ -197,7 +197,7 @@ class BSLSTM(nn.Module):
             fs = self.g_att_fc(xxx)
             fs = fs + (1. - torch.cat([mask[:, :, None].expand(B, L, H), TZ(B, 1, H) + 1], 1)) * 200.0
             n_gc = torch.sum(F.softmax(fs, 1) * ics, 1)
-            n_gh = F.sigmoid(self.g_out_fc(torch.cat([gh, h_bar], 1))) * torch.tanh(n_gc)
+            n_gh = torch.sigmoid(self.g_out_fc(torch.cat([gh, h_bar], 1))) * torch.tanh(n_gc)
             return n_gh, n_gc
 
         embs = data
