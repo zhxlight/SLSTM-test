@@ -52,7 +52,7 @@ class SLSTM(nn.Module):
         self.emb = nn.Embedding.from_pretrained(Tar_emb)
         # self.emb.weight = nn.Parameter(Tar_emb)
         self.input = nn.Linear(nemb, nhid)
-        self.fc = nn.Linear(2 * nhid, 2)
+        self.fc = nn.Linear(2 * nhid, 14)
         self.up_fc = nn.Linear(nhid, 2 * nhid)
 
         self.drop1 = nn.Dropout(dropout)
