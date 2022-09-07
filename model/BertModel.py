@@ -29,7 +29,7 @@ class TextClassificationModel(nn.Module):
 
     def __init__(
             self,
-            n_labels=2,
+            n_labels=14,
             dropout=0.0,
             fine_tune_bert=False,
             max_len=100,
@@ -110,7 +110,7 @@ class BertSLSTMTextClassificationModel(nn.Module):
 
     def __init__(
             self,
-            n_labels=2,
+            n_labels=14,
             dropout=0.0,
             fine_tune_bert=False,
             max_len=100,
