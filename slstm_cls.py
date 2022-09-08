@@ -36,7 +36,7 @@ _pickle.dump(embedding, open(f'./cache/{arg.dataset}_embedding.pkl', 'wb'))
 _pickle.dump(vocab, open(f'./cache/{arg.dataset}_vocab.pkl', 'wb'))
 
 
-model = SLSTM(nemb=300, nhid=300, num_layer=1, Tar_emb=embedding)
+model = SLSTM(nemb=50, nhid=50, num_layer=1, Tar_emb=embedding)
 
 trainer = Trainer(
     train_data=train_dataset,
