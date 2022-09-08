@@ -94,7 +94,7 @@ def load_dataset_with_glove(
         print(f"successful load dataset from {path}")
         return ds
 
-    embedding, _ = EmbedLoader().load_embedding(300, glove_path, 'glove', vocab)
+    embedding, _ = EmbedLoader().load_embedding(50, glove_path, 'glove', vocab)
 
     print(f"successful load dataset and embedding from {path}")
 
@@ -139,7 +139,7 @@ def load_conll_with_glove(
         print(f"successful load dataset from {path}")
         return ds
 
-    embedding, _ = EmbedLoader().load_embedding(300, glove_path, 'glove', vocab)
+    embedding, _ = EmbedLoader().load_embedding(50, glove_path, 'glove', vocab)
 
     print(f"successful load dataset and embedding from {path}")
 
