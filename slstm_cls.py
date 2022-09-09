@@ -1,6 +1,7 @@
 import _pickle
 import os
-
+import random
+import numpy as np
 import torch
 from fastNLP import Adam
 from fastNLP import Trainer, Tester, CrossEntropyLoss, AccuracyMetric
@@ -15,6 +16,22 @@ for k in arg.__dict__.keys():
 
 save_dir = os.path.join("./save", "cls")
 os.environ['CUDA_VISIBLE_DEVICES'] = arg.gpu
+
+def same_seeds(seed):
+    # Python built-in random module
+    random.seed(seed)
+    # Numpy
+    np.random.seed(seed)
+    # Torch
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+
+
+same_seeds(2022)
 
 if os.path.exists(f'./cache/{arg.dataset}_train_dataset.pkl'):
     train_dataset = _pickle.load(open(f'./cache/{arg.dataset}_train_dataset.pkl', 'rb'))

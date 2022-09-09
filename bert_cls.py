@@ -1,6 +1,7 @@
 import _pickle
 import os
-
+import random
+import numpy as np
 import torch
 from fastNLP import Adam
 from fastNLP import Trainer, Tester, CrossEntropyLoss, AccuracyMetric
@@ -16,14 +17,31 @@ for k in arg.__dict__.keys():
 save_dir = os.path.join("./save", "bert")
 os.environ['CUDA_VISIBLE_DEVICES'] = arg.gpu
 
+
+def same_seeds(seed):
+    # Python built-in random module
+    random.seed(seed)
+    # Numpy
+    np.random.seed(seed)
+    # Torch
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+
+
+same_seeds(2022)
+
 if os.path.exists(f'./cache/{arg.dataset}_train_dataset.pkl'):
     train_dataset = _pickle.load(open(f'./cache/{arg.dataset}_train_dataset.pkl', 'rb'))
     dev_dataset = _pickle.load(open(f'./cache/{arg.dataset}_dev_dataset.pkl', 'rb'))
     test_dataset = _pickle.load(open(f'./cache/{arg.dataset}_test_dataset.pkl', 'rb'))
 else:
     train_dataset = load_dataset(data_dir=arg.data_dir, data_path=arg.dataset + '_trn')
-    dev_dataset = load_dataset(data_dir=arg.data_dir,data_path=arg.dataset + '_dev')
-    test_dataset = load_dataset(data_dir=arg.data_dir,data_path=arg.dataset + '_tst')
+    dev_dataset = load_dataset(data_dir=arg.data_dir, data_path=arg.dataset + '_dev')
+    test_dataset = load_dataset(data_dir=arg.data_dir, data_path=arg.dataset + '_tst')
 
     # dataset = combine_data_set(train_dataset, dev_dataset)
 
@@ -34,7 +52,7 @@ with open(f'./cache/{arg.dataset}_dev_dataset.pkl', 'wb') as f:
 with open(f'./cache/{arg.dataset}_test_dataset.pkl', 'wb') as f:
     _pickle.dump(test_dataset, f)
 
-model = BertSLSTMTextClassificationModel()
+model = TextClassificationModel()
 
 trainer = Trainer(
     train_data=train_dataset,
@@ -58,8 +76,7 @@ trainer = Trainer(
 results = trainer.train(load_best_model=True)
 print(results)
 
-torch.save(model, os.path.join(save_dir,"best_model.pkl"))
-
+torch.save(model, os.path.join(save_dir, "best_model.pkl"))
 
 tester = Tester(
     data=test_dataset,
